@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../app/posly_theme.dart';
 
 class PoslyBrandMark extends StatelessWidget {
-  const PoslyBrandMark({this.compact = false, super.key});
+  const PoslyBrandMark({this.compact = false, this.color, super.key});
 
   final bool compact;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class PoslyBrandMark extends StatelessWidget {
             fontSize: compact ? 21 : 25,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.8,
-            color: Theme.of(context).colorScheme.onSurface,
+            color: color ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

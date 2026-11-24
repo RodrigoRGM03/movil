@@ -142,11 +142,86 @@ class _AuthScreenState extends State<AuthScreen> {
           _compactHero(),
           const SizedBox(height: 30),
         ] else ...[
-          const PoslyBrandMark(),
-          const SizedBox(height: 24),
+          _compactAuthHeader(),
+          const SizedBox(height: 18),
         ],
         _authPanel(),
       ],
+    );
+  }
+
+  Widget _compactAuthHeader() {
+    return Container(
+      width: double.infinity,
+      clipBehavior: Clip.antiAlias,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [PoslyColors.navy, PoslyColors.navy, PoslyColors.turquoise],
+          stops: [0, 0.88, 1],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -44,
+            top: -66,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: PoslyColors.turquoise.withValues(alpha: 0.13),
+                  width: 20,
+                ),
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Expanded(
+                    child: PoslyBrandMark(
+                      compact: true,
+                      color: PoslyColors.white,
+                    ),
+                  ),
+                  Icon(
+                    Icons.shield_outlined,
+                    color: PoslyColors.turquoise.withValues(alpha: 0.9),
+                    size: 22,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 17),
+              Text(
+                _mode == _AuthMode.forgotPassword
+                    ? 'Recupera el acceso a tu tienda'
+                    : 'Tu tienda, bajo control.',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: PoslyColors.white,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Administra tu negocio con PoSly.',
+                style: TextStyle(
+                  color: PoslyColors.white.withValues(alpha: 0.75),
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -250,13 +325,41 @@ class _AuthScreenState extends State<AuthScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                _heading,
-                style: Theme.of(context).textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w800),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 43,
+                    height: 43,
+                    decoration: BoxDecoration(
+                      color: PoslyColors.turquoise.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: const Icon(
+                      Icons.person_rounded,
+                      color: PoslyColors.turquoise,
+                    ),
+                  ),
+                  const SizedBox(width: 13),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _heading,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _subheading,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(_subheading),
               const SizedBox(height: 24),
               if (_mode == _AuthMode.register) ...[
                 TextFormField(

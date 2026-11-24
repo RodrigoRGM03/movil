@@ -69,9 +69,28 @@ void main() {
     expect(find.text('Las contraseñas no coinciden.'), findsOneWidget);
   });
 
+  testWidgets('compact login uses the branded access header', (tester) async {
+    final auth = AuthController(_FakeAuthGateway());
+    await auth.restoreSession();
+
+    await tester.pumpWidget(PoslyApp(auth: auth, api: ApiClient()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Iniciar sesión'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tu tienda, bajo control.'), findsOneWidget);
+    expect(find.text('Qué bueno verte'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('demo session opens dashboard without calling the API', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(1280, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final auth = AuthController(_FakeAuthGateway());
     await auth.restoreSession();
     auth.enterDemoMode();
@@ -79,10 +98,14 @@ void main() {
     await tester.pumpWidget(PoslyApp(auth: auth, api: ApiClient()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Resumen del negocio'), findsOneWidget);
+    expect(find.text('¡Hola, qué gusto verte!'), findsOneWidget);
+    expect(find.text('Tu negocio va por buen camino'), findsOneWidget);
     expect(find.text('Ventas de hoy'), findsOneWidget);
+    expect(find.text('Ventas de la semana'), findsOneWidget);
     expect(
-      find.text('Modo demostración: los datos son de ejemplo y no se guardan.'),
+      find.text(
+        'Estás explorando PoSly. Los datos son de ejemplo y no se guardan.',
+      ),
       findsOneWidget,
     );
     expect(find.textContaining('Configura API_BASE_URL'), findsNothing);

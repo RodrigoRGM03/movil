@@ -5,6 +5,20 @@ const demoDashboardSummary = <String, Object>{
   'Por reabastecer': 5,
 };
 
+const demoRecentSales = <Map<String, String>>[
+  {
+    'code': 'Venta #1042',
+    'customer': 'Venta de mostrador',
+    'amount': '\$186.50',
+  },
+  {'code': 'Venta #1041', 'customer': 'María López', 'amount': '\$92.00'},
+  {
+    'code': 'Venta #1040',
+    'customer': 'Venta de mostrador',
+    'amount': '\$245.00',
+  },
+];
+
 List<Map<String, Object>> demoRowsFor(String endpoint) {
   return switch (endpoint) {
     'products' => [

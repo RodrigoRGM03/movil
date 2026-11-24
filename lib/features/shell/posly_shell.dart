@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/posly_theme.dart';
 import '../../core/api/api_client.dart';
 import '../../core/auth/auth_controller.dart';
 import '../../shared/posly_brand_mark.dart';
@@ -38,7 +39,20 @@ class _PoslyShellState extends State<PoslyShell> {
     return Scaffold(
       appBar: AppBar(
         title: _isWide
-            ? Text(title, style: const TextStyle(fontWeight: FontWeight.w700))
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  Text(
+                    'Tu punto de venta, en un solo lugar',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              )
             : const PoslyBrandMark(compact: true),
         actions: [
           IconButton(
@@ -94,63 +108,114 @@ class _PoslyShellState extends State<PoslyShell> {
   }
 
   Widget _navigationPanel({bool isDrawer = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 16, 20),
-          child: Row(
-            children: [
-              const Expanded(child: PoslyBrandMark(compact: true)),
-              if (isDrawer)
-                IconButton(
-                  tooltip: 'Cerrar menú',
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded),
+    return ColoredBox(
+      color: PoslyColors.navy,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 16, 20),
+            child: Row(
+              children: [
+                const Expanded(
+                  child: PoslyBrandMark(
+                    compact: true,
+                    color: PoslyColors.white,
+                  ),
                 ),
-            ],
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
-          child: Text(
-            'OPERACIÓN',
-            style: TextStyle(
-              fontSize: 11,
-              letterSpacing: 1.1,
-              fontWeight: FontWeight.w800,
+                if (isDrawer)
+                  IconButton(
+                    tooltip: 'Cerrar menú',
+                    onPressed: () => Navigator.pop(context),
+                    color: PoslyColors.blueGray,
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+              ],
             ),
           ),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            children: [
-              _navigationTile(
-                index: 0,
-                title: 'Dashboard',
-                icon: Icons.space_dashboard_outlined,
-                isDrawer: isDrawer,
+          const Padding(
+            padding: EdgeInsets.fromLTRB(22, 8, 20, 10),
+            child: Text(
+              'MENÚ PRINCIPAL',
+              style: TextStyle(
+                color: Color(0xFFDBDFE8),
+                fontSize: 10,
+                letterSpacing: 1.4,
+                fontWeight: FontWeight.w800,
               ),
-              for (var index = 0; index < poslyModules.length; index++)
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              children: [
                 _navigationTile(
-                  index: index + 1,
-                  title: poslyModules[index].title,
-                  icon: poslyModules[index].icon,
+                  index: 0,
+                  title: 'Dashboard',
+                  icon: Icons.space_dashboard_outlined,
                   isDrawer: isDrawer,
                 ),
-            ],
+                for (var index = 0; index < poslyModules.length; index++)
+                  _navigationTile(
+                    index: index + 1,
+                    title: poslyModules[index].title,
+                    icon: poslyModules[index].icon,
+                    isDrawer: isDrawer,
+                  ),
+              ],
+            ),
           ),
-        ),
-        const Divider(height: 1),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            'PoSly · Punto de venta',
-            style: Theme.of(context).textTheme.labelSmall,
+          Container(
+            margin: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(13),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFFFFF).withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 17,
+                  backgroundColor: PoslyColors.turquoise,
+                  child: Icon(
+                    Icons.storefront_rounded,
+                    color: PoslyColors.navy,
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 11),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mi tienda',
+                        style: TextStyle(
+                          color: PoslyColors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        widget.auth.isDemo
+                            ? 'Modo demostración'
+                            : 'Sesión activa',
+                        style: TextStyle(
+                          color: PoslyColors.blueGray,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.more_horiz_rounded,
+                  color: PoslyColors.blueGray,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -160,19 +225,48 @@ class _PoslyShellState extends State<PoslyShell> {
     required IconData icon,
     required bool isDrawer,
   }) {
+    final selected = _selectedIndex == index;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
-      child: ListTile(
-        selected: _selectedIndex == index,
-        selectedTileColor: Theme.of(context).colorScheme.primary
-            .withValues(alpha: 0.16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        leading: Icon(icon),
-        title: Text(title, maxLines: 2, overflow: TextOverflow.ellipsis),
-        onTap: () {
-          setState(() => _selectedIndex = index);
-          if (isDrawer) Navigator.pop(context);
-        },
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () {
+            setState(() => _selectedIndex = index);
+            if (isDrawer) Navigator.pop(context);
+          },
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 48),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+            decoration: BoxDecoration(
+              color: selected ? PoslyColors.turquoise : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 21,
+                  color: selected ? PoslyColors.navy : PoslyColors.blueGray,
+                ),
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: selected ? PoslyColors.navy : PoslyColors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
